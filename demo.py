@@ -310,5 +310,5 @@ class CheckIn:
 
 if __name__ == '__main__':
     _login = CheckIn()
-    _login.login('20041423', 'shikaiHDU7')
+    _login.login('userID', 'userPassword')
     print(_login.getDaily())
