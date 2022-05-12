@@ -5,6 +5,7 @@
 # @File    : demo.py
 # @Software: PyCharm
 
+import json
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from bs4 import BeautifulSoup
@@ -13,7 +14,6 @@ import hashlib
 import time
 import base64
 import logging
-import json
 
 
 class CheckIn:
@@ -28,7 +28,7 @@ class CheckIn:
         self.MySha1 = ''
         self.btoa_1 = ''
         self.cookies = None
-        self.timestamp = 0
+        self.timestamp = ''
         self.lt = None
         self.rsa = ''
         self.sign = ''
@@ -40,25 +40,31 @@ class CheckIn:
         self.AuthToken = ''
         self.MySession = requests.session()
 
-        self.check_url = "https://api.hduhelp.com/base/healthcheckin?sign="
-        self.login_url = "https://api.hduhelp.com/login/direct/cas?clientID=healthcheckin&redirect=https%3A%2F%2Fhealthcheckin.hduhelp.com%2F%23%2Fauth"
+        self.check_url = "https://healthcheckin.hduhelp.com/"
+        self.login_url = "https://cas.hdu.edu.cn/cas/login?service=https%3A%2F%2Fapi.hduhelp.com%2Fsso%3Fstate%3Ddd7bf9fa-6c80-44cc-b17c-754e026f833c&skipWechat=true"
         self.checkin_url = ''
 
         self.wechatHeaders = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Referer": "https://cas.hdu.edu.cn/",
-            "Authorization": "",
+            "X-Requested-With": "com.tencent.mm",
+            "Accept-Encoding": "gzip, deflate",
+            "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+            "Sec-Fetch-Site": "none",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-User": "?1",
+            "Sec-Fetch-Dest": "document",
             "User-Agent": "Mozilla/5.0 (Linux; Android 11; IN2020 Build/RP1A.201005.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.99 XWEB/3189 MMWEBSDK/20220105 Mobile Safari/537.36 MMWEBID/1209 MicroMessenger/8.0.19.2080(0x2800133D) Process/toolsmp WeChat/arm64 Weixin NetType/WIFI Language/zh_CN ABI/arm64"
         }
 
         self.headers1 = {
+            "X-Requested-With": "com.tencent.mm",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
             "Accept-Encoding": "gzip, deflate, br",
             "Referer": "https://healthcheckin.hduhelp.com/",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36"
         }
         self.headers2 = {
+            "X-Requested-With": "com.tencent.mm",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
             "Accept-Encoding": "gzip, deflate, br",
             "Accept-Language": "zh-CN,zh;q=0.9",
@@ -69,6 +75,7 @@ class CheckIn:
         }
 
         self.headers3 = {
+            "X-Requested-With": "com.tencent.mm",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
             "Accept-Encoding": "gzip,deflate,br",
             "Accept-Language": "zh-CN,zh;q=0.9",
@@ -84,6 +91,7 @@ class CheckIn:
         }
 
         self.headers4 = {
+            "X-Requested-With": "com.tencent.mm",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
             "Accept-Encoding": "gzip, deflate, br",
             "Accept-Language": "zh-CN,zh;q=0.9",
@@ -92,9 +100,6 @@ class CheckIn:
             "User-Agent": "Mozilla/5.0 (Linux; Android 11; IN2020 Build/RP1A.201005.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.99 XWEB/3189 MMWEBSDK/20220105 Mobile Safari/537.36 MMWEBID/1209 MicroMessenger/8.0.19.2080(0x2800133D) Process/toolsmp WeChat/arm64 Weixin NetType/WIFI Language/zh_CN ABI/arm64",
         }
 
-        self.headersOptions = {
-
-        }
 
     def getLT(self, casResponse):
         soup = BeautifulSoup(casResponse.text, features='lxml')
@@ -132,8 +137,8 @@ class CheckIn:
     def getSign(self):
         btoa_1 = str(base64.b64encode(self.userID.encode('utf-8')), "utf-8")
         btoa_2 = str(base64.b64encode(self.provice.encode('utf-8')), "utf-8")
-        self.timestamp = int(time.time())
-        value = self.userName + btoa_1 + str(self.timestamp) + btoa_2 + self.city + self.country
+        self.timestamp = str(int(time.time() / 1e3))
+        value = self.userName + btoa_1 + self.timestamp + btoa_2 + self.city + self.country
         sha = hashlib.sha1(value.encode('utf-8'))
         encrypts = sha.hexdigest()
         return encrypts
@@ -272,55 +277,37 @@ class CheckIn:
             "access-control-request-method":"POST",
             "Referer": "https://healthcheckin.hduhelp.com",
             "Origin": "https://healthcheckin.hduhelp.com/",
-            "Authorization": ""
+            "Authorization": self.AuthToken
         }
         headers1={
-            "User-Agent": "Mozilla/5.0 (Linux; Android 12; Pixel 3 Build/SP1A.210812.015; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.99 XWEB/3195 MMWEBSDK/20220204 Mobile Safari/537.36 MMWEBID/2340 MicroMessenger/8.0.20.2100(0x28001437) Process/toolsmp WeChat/arm64 Weixin NetType/WIFI Language/zh_CN ABI/arm64",
+            "User-Agent": "Mozilla/5.0 (Linux; Android 11; IN2020 Build/RP1A.201005.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.99 XWEB/3189 MMWEBSDK/20220105 Mobile Safari/537.36 MMWEBID/1209 MicroMessenger/8.0.19.2080(0x2800133D) Process/toolsmp WeChat/arm64 Weixin NetType/WIFI Language/zh_CN ABI/arm64",
             "Accept": "application/json, text/plain, */*",
             "Accept-Encoding": "gzip, deflate, br",
             "Accept-Language":"zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
             "Referer": "https://healthcheckin.hduhelp.com",
             "Origin": "https://healthcheckin.hduhelp.com/",
-            "Authorization": "",
+            "Authorization": self.AuthToken,
             "Content-Length": "734",
             "Content-Type": "application/json;charset=UTF-8"
         }
-        headers_wx = {
-            "X-Requested-With": "com.tencent.mm",
-            "Accept": "application/json, text/plain, */*",
-            "Accept-Encoding": "gzip,deflate",
-            "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-            "Authorization": "",
-            "Cache-Control": "max-age=0",
-            "Connection": "keep-alive",
-            "Content-Length": "734",
-            "Content-Type": "application/json;charset=UTF-8",
-            "Sec-Fetch-Site": "same-site",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Dest": "empty",
-            "Host": "api.hduhelp.com",
-            "Origin": "https://healthcheckin.hduhelp.com",
-            "Referer": "https://healthcheckin.hduhelp.com/",
-            "User-Agent": "Mozilla/5.0 (Linux; Android 12; Pixel 3 Build/SP1A.210812.015; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.99 XWEB/3195 MMWEBSDK/20220204 Mobile Safari/537.36 MMWEBID/2340 MicroMessenger/8.0.20.2100(0x28001437) Process/toolsmp WeChat/arm64 Weixin NetType/WIFI Language/zh_CN ABI/arm64",
-        }
-        url = self.check_url + self.getSign()
+        url = self.check_url + 'base/healthcheckin?sign=' + self.getSign()
         data = {
-            "name": "yourname",#你的名字
-            "timestamp": self.timestamp,
+            "name": "石开",
+            "timestamp": int(self.timestamp),
             "province": "330000",
             "city": "330100",
             "country": "330101",
             "answerJsonStr": "{\"ques1\":\"健康良好\",\"ques2\":\"正常在校（未经学校审批，不得提前返校）\",\"ques3\":null,\"ques4\":\"否\",\"ques5\":\"否\",\"ques6\":\"\",\"ques7\":null,\"ques77\":null,\"ques8\":null,\"ques88\":null,\"ques9\":null,\"ques10\":null,\"ques11\":null,\"ques12\":null,\"ques13\":null,\"ques14\":null,\"ques15\":\"否\",\"ques16\":\"否\",\"ques17\":\"无新冠肺炎确诊或疑似\",\"ques18\":\"37度以下\",\"ques19\":null,\"ques20\":\"绿码\",\"ques21\":\"否\",\"ques22\":\"否\",\"ques23\":\"否\",\"ques24\":\"共三针 - 已完成第三针\",\"carTo\":[\"330000\",\"330100\",\"330101\"]}"
         }
-        print(data)
-        check_data = json.dumps(data)
+        # data = json.dumps(check_data)
         try:
-            # respond0 = self.MySession.options(url=url, headers=headers0)
-            respond1 = self.MySession.post(url=url, headers=headers_wx, data=data)
-            # print("respond0.status_code: {}".format(respond0.status_code))
+            respond0 = self.MySession.options(url=url, headers=headers0)
+            respond1 = self.MySession.post(url=url, headers=headers1, data=data)
+            print("respond0.status_code: {}".format(respond0.status_code))
             print("respond1.status_code: {}".format(respond1.status_code))
-            print("response:{}".format(respond1.text))
-            if respond1.status_code==200:
+            print(respond1.text)
+            if respond0.status_code == 204 and \
+                respond1.status_code==200:
                 print("打卡成功")
         except:
             raise
@@ -340,22 +327,18 @@ class CheckIn:
         if respond.status_code==200:
             return respond.text
 
+
     def getValidate(self):
         try:
-            self.wechatHeaders["Authorization"]=''
             respond=self.MySession.get(url="https://api.hduhelp.com/token/validate",headers=self.wechatHeaders)
             print(respond.text)
             if respond.status_code==200:
-                print("Validate GET OK!=>{}".format(respond.text))
+                print("Validate GET OK!")
         except:
             raise
 
 if __name__ == '__main__':
     _login = CheckIn()
-    # Hduhelp Account and Password
     _login.login('20041423', '')
     print(_login.getDaily())
-
-    _login.getValidate()
-    # _login.submit()
-
+    _login.submit()
