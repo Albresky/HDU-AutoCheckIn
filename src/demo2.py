@@ -292,7 +292,7 @@ class CheckIn:
         }
         url = self.check_url + 'base/healthcheckin?sign=' + self.getSign()
         data = {
-            "name": "石开",
+            "name": "xxx",
             "timestamp": int(self.timestamp),
             "province": "330000",
             "city": "330100",
@@ -339,6 +339,6 @@ class CheckIn:
 
 if __name__ == '__main__':
     _login = CheckIn()
-    _login.login('20041423', '')
+    _login.login('xxx', '')
     print(_login.getDaily())
     _login.submit()

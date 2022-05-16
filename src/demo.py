@@ -353,7 +353,7 @@ class CheckIn:
 if __name__ == '__main__':
     _login = CheckIn()
     # Hduhelp Account and Password
-    _login.login('20041423', '')
+    _login.login('xxx', 'xxx')
     print(_login.getDaily())
 
     _login.getValidate()

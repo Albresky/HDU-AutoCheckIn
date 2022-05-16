@@ -40,27 +40,27 @@ from urllib.parse import quote
 #     js_code = f.read()
 # context = js2py.EvalJs()
 # context.execute(js_code)
-# rsa='20041423'+'xxxx'+'LT-543127-rxHR4TXBfeupnDtIgP1g6dc0CWMco7-cas'
+# rsa='xxx'+'xxx'+'LT-543127-rxHR4TXBfeupnDtIgP1g6dc0CWMco7-cas'
 # result = context.strEnc(rsa,'1','2','3')
 # print(result)
 
 # usr=CheckIn()
-# print(usr.login('20041423',''))
+# print(usr.login('',''))
 # usr.MySession.request(url=my)
 # import js2py
 # with open('sign.js', 'r', encoding='UTF-8') as f:
 #     js_code = f.read()
 # jsFunction = js2py.EvalJs()
 # jsFunction.execute(js_code)
-# sign = jsFunction.getUnencodeSign("石开", '20041423', '330000', '330100', '330101')
+# sign = jsFunction.getUnencodeSign("", '', '330000', '330100', '330101')
 # sign = str(sign)
 # print(sign)
 # sha = hashlib.sha1(sign.encode('utf-8'))
 # encrypts = sha.hexdigest()
 # print(encrypts)
-# print('石开'.encode('utf-8'))
+# print('xxx'.encode('utf-8'))
 
-# username="石开"serid ='20041423'
+# username="xxx"serid =''
 # # provice = '330000'
 # # city = '330100'
 # # country = '330101'
@@ -84,7 +84,7 @@ from urllib.parse import quote
 # # }
 # #
 # # data = {
-# #     "name": "石开",
+# #     "name": "xxx",
 # #     "timestamp": 1646995092,
 # #     "province": "330000",
 # #     "city": "330100",
@@ -108,8 +108,8 @@ from urllib.parse import quote
 
 class SimpleCheckIn:
     def __init__(self):
-        self.userName = "石开"
-        self.userID = '20041423'
+        self.userName = "xxx"
+        self.userID = 'xxx'
         self.provice = '330000'
         self.city = '330100'
         self.country = '330101'
@@ -151,7 +151,7 @@ class SimpleCheckIn:
             "Accept": "application/json, text/plain, */*",
             "Accept-Encoding": "gzip,deflate",
             "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-            "Authorization": "",
+            "Authorization": "token 8b83991c-f75e-4f09-9400-81d3332174ca",
             "Cache-Control": "max-age=0",
             "Connection": "keep-alive",
             "Content-Length": "734",
@@ -166,7 +166,7 @@ class SimpleCheckIn:
         }
         url = "https://healthcheckin.hduhelp.com/" + 'base/healthcheckin?sign=' + self.getSign()
         data = {
-            "name": "石开",
+            "name": "xxx",
             "timestamp": str(int(time.time())),
             "province": "330000",
             "city": "330100",

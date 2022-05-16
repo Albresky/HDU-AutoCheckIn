@@ -106,7 +106,7 @@ class checkin2:
             "carTo": ["330000", "330100", "330101"]
         }
         data = {
-            "name": "石开",
+            "name": "xxx",
             "timestamp": self.timestamp,
             "province": "330000",
             "city": "330100",
@@ -129,5 +129,5 @@ class checkin2:
 
 
 if __name__ == "__main__":
-    mycheck = checkin2('石开', '20041423', '330000', '330100', '330101')
+    mycheck = checkin2('xxx', 'xxx', '330000', '330100', '330101')
     mycheck.go()
